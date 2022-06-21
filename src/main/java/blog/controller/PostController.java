@@ -45,8 +45,7 @@ public class PostController {
     public ResponseEntity<List<Post>> getAllPostsNotDeleted(@RequestParam(name = "q", required = false) Specification<Post> specification,
                                                             @RequestParam(name = "page", required = false) Pageable pageable,
                                                             @RequestParam(name = "sort", required = false) Sort sort) {
-        Specification<Post> spec = combineSpecificationFor(specification, ACTIVE);
-        return ResponseEntity.ok(postService.findAll(spec, pageable, sort));
+        return ResponseEntity.ok(postService.findAll(specification, pageable, sort));
     }
 
     @GetMapping("/{identifier}")
