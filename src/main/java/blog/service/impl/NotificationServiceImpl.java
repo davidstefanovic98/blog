@@ -5,6 +5,7 @@ import blog.entity.Notification;
 import blog.entity.Post;
 import blog.entity.User;
 import blog.exception.HttpUnauthorizedException;
+import blog.repository.CommentRepository;
 import blog.repository.NotificationRepository;
 import blog.repository.base.BaseRepository;
 import blog.service.CommentService;
@@ -20,12 +21,12 @@ import java.util.List;
 public class NotificationServiceImpl extends BaseServiceImpl<Notification> implements NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final CommentService commentService;
+    private final CommentRepository commentRepository;
 
-    protected NotificationServiceImpl(NotificationRepository notificationRepository, CommentService commentService) {
+    protected NotificationServiceImpl(NotificationRepository notificationRepository, CommentRepository commentRepository) {
         super(notificationRepository);
         this.notificationRepository = notificationRepository;
-        this.commentService = commentService;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -45,7 +46,7 @@ public class NotificationServiceImpl extends BaseServiceImpl<Notification> imple
         notification.setTitle(String.format("%s commented on post %s", comment.getUser().getDisplayName(), post.getTitle()));
         notification.setBody(comment.getBody());
         notification.setActionUrl("/posts/" + post.getSlug() + "#comments");
-        commentService.findAllByPost(post)
+        commentRepository.findAllByPost(post)
                 .stream()
                 .map(Comment::getUser)
                 .distinct()
