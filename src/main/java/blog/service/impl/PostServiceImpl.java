@@ -2,12 +2,15 @@ package blog.service.impl;
 
 import blog.entity.Post;
 import blog.entity.Tag;
+import blog.entity.User;
 import blog.entity.domain.PostSummary;
+import blog.exception.HttpUnauthorizedException;
 import blog.exception.InvalidPostSummaryTypeException;
 import blog.repository.PostRepository;
 import blog.service.PostService;
 import blog.service.TagService;
 import blog.service.base.impl.BaseServiceImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,6 +77,18 @@ public class PostServiceImpl extends BaseServiceImpl<Post> implements PostServic
                         .byCategory();
             default:
                 throw new InvalidPostSummaryTypeException();
+        }
+    }
+
+    @Override
+    public Post update(Post post) {
+        Post existing = findById(post.getId());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        post.setUser(existing.getUser());
+        if (user != null && (user.isAdmin() || user.equals(existing.getUser()))) {
+            return postRepository.save(post);
+        } else {
+            throw new HttpUnauthorizedException();
         }
     }
 }

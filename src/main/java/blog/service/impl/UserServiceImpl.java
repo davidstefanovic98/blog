@@ -1,6 +1,5 @@
 package blog.service.impl;
 
-import blog.bean.CustomPasswordEncoder;
 import blog.data.ChangePasswordDTO;
 import blog.data.RegisterUserDTO;
 import blog.entity.Role;
@@ -11,9 +10,9 @@ import blog.exception.InvalidPasswordException;
 import blog.exception.PasswordMismatchException;
 import blog.exception.PasswordValidationException;
 import blog.repository.UserRepository;
-import blog.service.RoleService;
 import blog.service.UserService;
 import blog.service.base.impl.BaseServiceImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import static blog.entity.domain.RecordStatus.*;
 @Service
 public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
 
-    private final CustomPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public static final Pattern EMAIL_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -40,10 +39,10 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     //(?=.*[@#$%^&+=]) for special characters
     private final UserRepository userRepository;
 
-    protected UserServiceImpl(UserRepository userRepository) {
+    protected UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         super(userRepository);
         this.userRepository = userRepository;
-        this.passwordEncoder = new CustomPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -68,13 +67,13 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         } else {
             if (!passwordDto.isValid())
                 throw new PasswordMismatchException();
-            if (!passwordEncoder.getEncoder().matches(passwordDto.getPrevious(), user.getPassword()))
+            if (!passwordEncoder.matches(passwordDto.getPrevious(), user.getPassword()))
                 throw new InvalidPasswordException();
         }
 
         validatePassword(passwordDto.getPassword());
 
-        user.setPassword(passwordEncoder.getEncoder().encode(passwordDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(passwordDto.getPassword()));
 
         userRepository.save(user);
     }
@@ -94,7 +93,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Override
     public User resetPassword(Integer userId) {
         User user = findById(userId);
-        user.setPassword(passwordEncoder.getEncoder().encode(user.getDefaultPassword()));
+        user.setPassword(passwordEncoder.encode(user.getDefaultPassword()));
         user.setRecordStatus(EXPIRED);
         return userRepository.save(user);
     }
@@ -133,7 +132,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         User user = new User();
         user.setUsername(dto.getUsername().toLowerCase(Locale.ROOT).trim());
         user.setDisplayName(user.getUsername());
-        user.setPassword(passwordEncoder.getEncoder().encode(dto.getPassword()));
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setFirstName(dto.getFirstName().trim());
         user.setLastName(dto.getLastName().trim());
         user.setEmail(dto.getEmail().trim());

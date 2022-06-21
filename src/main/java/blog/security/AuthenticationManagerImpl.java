@@ -1,6 +1,5 @@
 package blog.security;
 
-import blog.bean.CustomPasswordEncoder;
 import blog.entity.User;
 import blog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +26,9 @@ import static blog.util.StringUtils.falsy;
 public class AuthenticationManagerImpl implements AuthenticationManager {
     private final UserRepository userRepository;
     private final Environment env;
-    private final CustomPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Resource
+    @Resource(name="errorMessages")
     private Properties errors;
 
     @Override
@@ -46,7 +45,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         if (falsy((String)password))
             throw new BadCredentialsException(errors.getProperty("auth.login.invalid-credentials"));
 
-        if (!passwordEncoder.getEncoder().matches((String) password, user.getPassword()))
+        if (!passwordEncoder.matches((String) password, user.getPassword()))
             throw new BadCredentialsException(errors.getProperty("auth.login.invalid-credentials"));
 
         if (user.isCredentialsExpired())

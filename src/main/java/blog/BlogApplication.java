@@ -15,7 +15,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan("blog.entity")
 @EnableJpaRepositories(value = "blog.repository",
         excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Exclude.class))
-@EnableJpaAuditing
 public class BlogApplication {
 
     public static void main(String[] args) {

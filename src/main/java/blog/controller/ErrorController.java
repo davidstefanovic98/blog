@@ -25,7 +25,8 @@ import java.util.Properties;
 @ControllerAdvice
 @Component
 public class ErrorController {
-    @Resource
+
+    @Resource(name="errorMessages")
     private Properties properties;
 
     @ExceptionHandler({

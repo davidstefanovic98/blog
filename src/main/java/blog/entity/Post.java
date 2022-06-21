@@ -1,8 +1,10 @@
 package blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.jackson.JsonComponent;
 
 import javax.persistence.*;
 import java.time.LocalDate;

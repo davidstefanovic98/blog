@@ -20,4 +20,6 @@ public interface PostService extends BaseService<Post> {
     List<Tag> deleteTagsById(Integer postId, List<Tag> tags);
 
     PostSummary getSummary(PostSummary.SummaryType type);
+
+    Post update(Post post);
 }

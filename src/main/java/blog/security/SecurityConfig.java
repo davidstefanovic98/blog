@@ -1,6 +1,5 @@
 package blog.security;
 
-import blog.bean.CustomPasswordEncoder;
 import blog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,12 +13,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -31,9 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final Environment env;
-    private final CustomPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Resource
+    @Resource(name="errorMessages")
     private Properties errorMessages;
 
     @Override
@@ -57,22 +58,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(Collections.singletonList("*"));
         configuration.setAllowedMethods(List.of(
                 HttpMethod.GET.name(),
                 HttpMethod.DELETE.name(),
                 HttpMethod.PUT.name(),
                 HttpMethod.POST.name(),
                 HttpMethod.OPTIONS.name()));
-        List<String> headers = List.of(
-                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+        configuration.setAllowedHeaders(List.of(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
-                SecurityConstants.REFRESH_TOKEN_HEADER,
-                "X-Data-Count");
-
-        configuration.setAllowedHeaders(headers);
-        configuration.setExposedHeaders(headers);
+                HttpHeaders.ORIGIN,
+                HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS,
+                HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS));
+        configuration.setExposedHeaders(List.of(
+                HttpHeaders.CONTENT_TYPE,
+                HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS,
+                HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
