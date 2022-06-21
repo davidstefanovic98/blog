@@ -3,7 +3,6 @@ package blog.service.impl;
 import blog.entity.Role;
 import blog.entity.User;
 import blog.repository.RoleRepository;
-import blog.repository.base.BaseRepository;
 import blog.service.RoleService;
 import blog.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         this.roleRepository = roleRepository;
     }
 
-
     @Override
     public List<User> findAllUsersById(Integer roleId) {
         return findById(roleId).getUsers();
@@ -29,7 +27,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
 
     @Override
     public Role findByName(String name) {
-        return roleRepository.findByName(name).orElseThrow(() ->
-                new NoSuchElementException("No role found with this name: " + name));
+        return roleRepository.findByName(name)
+                .orElseThrow(() -> new NoSuchElementException("No role found with this name: " + name));
     }
 }
