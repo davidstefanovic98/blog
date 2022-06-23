@@ -36,8 +36,8 @@ class PostServiceImplTest {
 
     @AfterEach
     void tearDown() {
-        postRepository.deleteAll();
         categoryRepository.deleteAll();
+        postRepository.deleteAll();
     }
 
     @Test
