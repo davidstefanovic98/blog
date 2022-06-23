@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.jackson.JsonComponent;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -47,4 +46,16 @@ public class Post extends Auditable {
     @ManyToMany
     @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_fk"), inverseJoinColumns = @JoinColumn(name = "tag_fk"))
     private List<Tag> tags;
+
+
+    public Post createPostForTesting(Integer postId, String title, Category category, String excerpt, String body, String slug) {
+        Post post = new Post();
+        post.setId(postId);
+        post.setTitle(title);
+        post.setExcerpt(excerpt);
+        post.setCategory(category);
+        post.setBody(body);
+        post.setSlug(slug);
+        return post;
+    }
 }

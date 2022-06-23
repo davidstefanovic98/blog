@@ -43,7 +43,7 @@ public class BaseServiceImpl<T> implements BaseService<T> {
     @Override
     public T findById(Integer id) {
         return baseRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Entity with this id " + id + "doesn't exist."));
+                .orElseThrow(() -> new NoSuchElementException("Entity with this id " + id + " doesn't exist."));
     }
 
     @Override

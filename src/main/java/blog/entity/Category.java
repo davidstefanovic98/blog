@@ -1,5 +1,6 @@
 package blog.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "category")
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class Category extends Auditable {

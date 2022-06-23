@@ -25,10 +25,6 @@ public class User extends Auditable implements UserDetails {
     @EqualsAndHashCode.Include
     @Column(name = "user_id")
     private Integer id;
-    // TODO: maybe later.
-//    @JoinColumn(name = "image_fk", referencedColumnName = "media_id")
-//    @ManyToOne
-//    private Media image;
     @Column(name = "username")
     private String username;
     @JsonProperty(access = WRITE_ONLY)
